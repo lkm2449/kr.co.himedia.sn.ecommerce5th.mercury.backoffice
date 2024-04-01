@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<settings>
+		<setting name="jdbcTypeForNull" value="NULL" />
+	</settings>
+	<typeAliases>
+		<typeAlias type="kr.co.himedia.ecommerce.common.dto.PagingDto"					alias="pagingDto" />
+		<typeAlias type="kr.co.himedia.ecommerce.backoffice.customer.dto.CustomerDto"	alias="customerDto" />
+		<typeAlias type="kr.co.himedia.ecommerce.backoffice.board.dto.BoardDto"			alias="boardDto" />
+		<typeAlias type="kr.co.himedia.ecommerce.backoffice.reply.dto.ReplyDto"			alias="replyDto" />
+		<typeAlias type="kr.co.himedia.ecommerce.backoffice.sale.dto.SaleDto"			alias="saleDto" />
+		<typeAlias type="kr.co.himedia.ecommerce.backoffice.board.dto.BoardDto"			alias="boardDto" />
+		<typeAlias type="kr.co.himedia.ecommerce.backoffice.reply.dto.ReplyDto"			alias="replyDto" />
+		<typeAlias type="kr.co.himedia.ecommerce.backoffice.order.dto.OrderDto"			alias="orderDto" />
+	</typeAliases>
+	<mappers>
+		<mapper resource="kr/co/himedia/ecommerce/backoffice/mybatis/customer/Customer.xml" />
+		<mapper resource="kr/co/himedia/ecommerce/backoffice/mybatis/board/Board.xml" />
+		<mapper resource="kr/co/himedia/ecommerce/backoffice/mybatis/reply/Reply.xml" />
+		<mapper resource="kr/co/himedia/ecommerce/backoffice/mybatis/stats/Stats.xml" />
+		<mapper resource="kr/co/himedia/ecommerce/backoffice/mybatis/sale/Sale.xml" />
+		<mapper resource="kr/co/himedia/ecommerce/backoffice/mybatis/order/Order.xml" />
+		<mapper resource="kr/co/himedia/ecommerce/backoffice/mybatis/login/Login.xml" />
+	</mappers>
+</configuration>

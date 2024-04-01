@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.himedia.ecommerce.backoffice.mybatis.stats.Stats">
+	
+	<select id="cancelTop" resultType="saleDto">
+		SELECT 
+			*
+		FROM
+			(
+			SELECT 
+				TB_SLE.SEQ_SLE
+				, SLE_NM
+				, COUNT(*) as count
+			FROM 
+				TB_BUY_MST INNER JOIN TB_BUY_DTL ON TB_BUY_MST.SEQ_BUY_MST = TB_BUY_DTL.SEQ_BUY_MST
+				,TB_SLE
+			WHERE
+				CD_STATE_PAY = 'C' 
+			AND
+				TB_SLE.SEQ_SLE = TB_BUY_DTL.SEQ_SLE
+			GROUP BY
+				TB_SLE.SEQ_SLE, SLE_NM
+			)
+		WHERE
+			<![CDATA[
+				ROWNUM <= 5
+			]]>
+	</select>
+	
+	
+	<select id="cancelWeek" resultType="customerDto">
+		SELECT
+			COUNT(*) as count
+			, TO_CHAR(DT_REG, 'MM/DD') dt_reg
+		FROM
+			TB_BUY_MST
+		WHERE
+			DT_REG >= TRUNC(SYSDATE) - 7
+		AND
+			CD_STATE_PAY = 'C'
+		GROUP BY 
+			TO_CHAR(DT_REG, 'MM/DD')
+	</select>
+	
+	<select id="countWeekWeb" resultType="customerDto">
+		SELECT
+			COUNT(*) as count
+			, TO_CHAR(DT_REG, 'MM/DD') dt_reg
+		FROM
+			TB_BUY_MST
+		WHERE
+			CD_WHERE = 'W'
+		AND
+			DT_REG >= TRUNC(SYSDATE) - 7
+		AND
+			CD_STATE_PAY = 'Y'
+		GROUP BY 
+			TO_CHAR(DT_REG, 'MM/DD')
+	</select>
+	
+	<select id="countWeekApp" resultType="customerDto">
+		SELECT
+			COUNT(*) as count
+			, TO_CHAR(DT_REG, 'MM/DD') dt_reg
+		FROM
+			TB_BUY_MST
+		WHERE
+			CD_WHERE = 'A'
+		AND
+			DT_REG >= TRUNC(SYSDATE) - 7
+		AND
+			CD_STATE_PAY = 'Y'
+		GROUP BY 
+			TO_CHAR(DT_REG, 'MM/DD')
+	</select>
+	
+	<select id="countApp" resultType="java.lang.Integer">
+		SELECT
+			COUNT(*)
+		FROM
+			TB_BUY_MST
+		WHERE
+			CD_WHERE = 'A'
+		AND
+			CD_STATE_PAY = 'Y'
+	</select>
+	
+	<select id="countWeb" resultType="java.lang.Integer">
+		SELECT
+			COUNT(*)
+		FROM
+			TB_BUY_MST
+		WHERE
+			CD_WHERE = 'W'
+		AND
+			CD_STATE_PAY = 'Y'
+	</select>
+	
+	<select id="selectYears" resultType="java.lang.String">
+		SELECT 
+			TO_CHAR(DT_REG, 'YYYY') 
+		FROM 
+			TB_CST 
+		GROUP BY 
+			TO_CHAR(DT_REG, 'YYYY')
+	</select>
+	
+	<select id="joinStats" parameterType="customerDto" resultType="customerDto">
+		SELECT 
+			COUNT(*) AS "count"
+			, TO_CHAR(DT_REG, 'MM') AS dt_reg
+		FROM
+			TB_CST
+		WHERE
+			TO_CHAR(DT_REG, 'YYYY') = #{year}
+		GROUP BY
+			TO_CHAR(DT_REG, 'MM') 
+		ORDER BY 
+			DT_REG
+	</select>
+	
+	<select id="orderStats" parameterType="saleDto" resultType="saleDto">
+		SELECT
+			SUM(PRICE) price
+			, COUNT(*) AS "count"
+			, TO_CHAR(DT_REG, 'DD') AS dt_reg
+		FROM
+			TB_BUY_DTL
+		WHERE
+			TO_CHAR(DT_REG, 'MM') = #{month}
+		GROUP BY
+			TO_CHAR(DT_REG, 'DD') 
+		ORDER BY 
+			DT_REG
+	</select>
+	
+	<select id="selectMonths" resultType="java.lang.String">
+		SELECT 
+			TO_CHAR(DT_REG, 'MM') 
+		FROM 
+			TB_BUY_DTL
+		GROUP BY 
+			TO_CHAR(DT_REG, 'MM')
+	</select>
+	
+	<select id="select" parameterType="saleDto" resultType="saleDto">
+		SELECT 
+			SUM(BUY_T_PRICE) sumSale
+			, TO_CHAR(DT_REG, 'MM') AS dt_reg
+		FROM
+			TB_BUY_MST
+		WHERE
+			TO_CHAR(DT_REG, 'YYYY') = #{year}
+		GROUP BY
+			TO_CHAR(DT_REG, 'MM') 
+		ORDER BY 
+			DT_REG
+	</select>
+	
+</mapper>

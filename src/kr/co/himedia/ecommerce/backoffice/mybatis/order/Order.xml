@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.himedia.ecommerce.backoffice.mybatis.order.Order">
+	
+	<select id="mainList" resultType="orderDto">
+		SELECT
+			*
+		FROM
+			(
+			SELECT
+				/*+ first_rows(10) */ ROW_NUMBER() OVER (ORDER BY TB_BUY_MST.DT_REG DESC) rnum
+				, SEQ_BUY_MST
+				, CST_NM
+				, BUY_INFO
+				, BUY_T_PRICE
+				, REQUEST
+				, DECODE(CD_STATE_PAY, 'N', '결제전', 'Y', '결제완료', '기타') CD_STATE_PAY
+				, DECODE(CD_STATE_DELIVERY, 'N', '배송전', 'Y', '배송완료', 'D', '배송중', '기타') CD_STATE_DELIVERY
+				, TO_CHAR(TB_BUY_MST.DT_REG, 'YYYY-MM-DD') DT_REG
+			FROM
+				TB_BUY_MST INNER JOIN TB_CST ON TB_BUY_MST.SEQ_CST = TB_CST.SEQ_CST
+			WHERE
+			<![CDATA[
+				CD_STATE_PAY <> 'C'
+			AND
+				FLG_DELETE <> 'Y'
+			]]>
+			)
+		<![CDATA[
+		WHERE
+			rnum <= 5
+		]]> 
+		ORDER BY rnum
+	</select>
+	
+	<select id="selectOrderList" parameterType="pagingDto" resultType="orderDto">
+		SELECT
+			*
+		FROM
+			(
+			SELECT
+				/*+ first_rows(10) */ ROW_NUMBER() OVER (ORDER BY TB_BUY_MST.DT_REG DESC) rnum
+				, SEQ_BUY_MST
+				, CST_NM
+				, BUY_INFO
+				, BUY_T_PRICE
+				, REQUEST
+				, DECODE(CD_STATE_PAY, 'N', '결제전', 'Y', '결제완료', '기타') CD_STATE_PAY
+				, DECODE(CD_STATE_DELIVERY, 'N', '배송전', 'Y', '배송완료', 'D', '배송중', '기타') CD_STATE_DELIVERY
+				, TO_CHAR(TB_BUY_MST.DT_REG, 'YYYY-MM-DD') DT_REG
+			FROM
+				TB_BUY_MST INNER JOIN TB_CST ON TB_BUY_MST.SEQ_CST = TB_CST.SEQ_CST
+			WHERE
+			<![CDATA[
+				CD_STATE_PAY <> 'C'
+			AND
+				FLG_DELETE <> 'Y'
+			]]>
+			)
+		<![CDATA[
+		WHERE rnum >= (${currentPage} - 1) * ${linePerPage} + 1 AND rnum <= ${currentPage} * ${linePerPage}
+		]]> 
+		ORDER BY rnum
+	</select>
+	
+	<select id="countOrderList" resultType="java.lang.Integer">
+		SELECT 
+			COUNT(*)
+		FROM
+			TB_BUY_MST
+		WHERE
+		<![CDATA[
+			CD_STATE_PAY <> 'C'
+		AND
+			FLG_DELETE <> 'Y'
+		]]>
+	</select>
+	
+	<select id="countCancelList" resultType="java.lang.Integer">
+		SELECT 
+			COUNT(*)
+		FROM
+			TB_BUY_MST
+		WHERE
+			CD_STATE_PAY = 'C'
+		AND
+			FLG_DELETE = 'Y'
+	</select>
+	
+	<select id="cancelList" parameterType="pagingDto" resultType="orderDto">
+		SELECT
+			*
+		FROM
+			(
+			SELECT
+				/*+ first_rows(10) */ ROW_NUMBER() OVER (ORDER BY TB_BUY_MST.DT_REG DESC) rnum
+				, SEQ_BUY_MST
+				, CST_NM
+				, BUY_INFO
+				, BUY_T_PRICE
+				, DECODE(CD_STATE_DELIVERY, 'N', '배송전', 'Y', '배송 완료', 'D', '배송중', '기타') CD_STATE_DELIVERY
+				, TO_CHAR(TB_BUY_MST.DT_REG, 'YYYY-MM-DD') DT_REG
+				, TO_CHAR(TB_BUY_MST.DT_UPT, 'YYYY-MM-DD') DT_UPT
+			FROM
+				TB_BUY_MST INNER JOIN TB_CST ON TB_BUY_MST.SEQ_CST = TB_CST.SEQ_CST
+			WHERE
+				CD_STATE_PAY = 'C'
+			AND
+				FLG_DELETE = 'Y'
+			)
+		<![CDATA[
+		WHERE rnum >= (${currentPage} - 1) * ${linePerPage} + 1 AND rnum <= ${currentPage} * ${linePerPage}
+		]]> 
+		ORDER BY rnum
+	</select>
+	
+	<update id="updateShipping" parameterType="orderDto">
+		UPDATE
+			TB_BUY_MST
+		SET
+			CD_STATE_DELIVERY	= #{cd_state_delivery}
+			, DT_UPT	= SYSDATE
+			, UPDATER	= #{updater}
+		WHERE
+			SEQ_BUY_MST = #{seq_buy_mst}
+	</update>
+	
+	<select id="selectShippingList" parameterType="pagingDto" resultType="orderDto">
+		SELECT
+			*
+		FROM
+			(
+			SELECT
+				/*+ first_rows(10) */ ROW_NUMBER() OVER (ORDER BY TB_BUY_MST.DT_REG DESC) rnum
+				, SEQ_BUY_MST
+				, CST_NM
+				, BUY_INFO
+				, BUY_T_PRICE
+				, REQUEST
+				, CD_STATE_DELIVERY
+				, TO_CHAR(TB_BUY_MST.DT_REG, 'YYYY-MM-DD') DT_REG
+			FROM
+				TB_BUY_MST INNER JOIN TB_CST ON TB_BUY_MST.SEQ_CST = TB_CST.SEQ_CST
+			WHERE
+				CD_STATE_PAY = 'Y'
+			AND
+			<![CDATA[
+				FLG_DELETE <> 'Y'
+			]]>
+			)
+		<![CDATA[
+		WHERE rnum >= (${currentPage} - 1) * ${linePerPage} + 1 AND rnum <= ${currentPage} * ${linePerPage}
+		]]> 
+		ORDER BY rnum
+	</select>
+	
+	<select id="countShippingList" resultType="java.lang.Integer">
+		SELECT 
+			COUNT(*)
+		FROM
+			TB_BUY_MST
+		WHERE
+			CD_STATE_PAY = 'Y'
+		AND
+		<![CDATA[
+			FLG_DELETE <> 'Y'
+		]]>
+	</select>
+	
+</mapper>

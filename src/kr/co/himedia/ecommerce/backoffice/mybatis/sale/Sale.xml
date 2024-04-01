@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.himedia.ecommerce.backoffice.mybatis.sale.Sale">
+	
+	<insert id="insert" parameterType="saleDto">
+		INSERT INTO TB_SLE
+			(SEQ_SLE, SLE_NM, CD_CTG, IMG, DESCES, PRICE_SALE, CD_STATE_SALE, DT_SALE_START, DT_SALE_END, DT_REG, REGISTER, COM_NM)
+		VALUES
+			(#{seq_sle}, #{sle_nm}, #{cd_ctg}, #{img}, #{desces}, #{price_sale}, #{cd_state_sale}, SYSDATE, TO_DATE(#{dt_sale_end}, 'YYYY/MM/DD'), SYSDATE, 1, #{com_nm})
+	</insert>
+	
+	<select id="sequence" resultType="java.lang.Integer" >
+		SELECT SQ_SEQ_SLE.NEXTVAL FROM DUAL
+	</select>
+	
+	<select id="revCount" parameterType="pagingDto" resultType="java.lang.Integer">
+		SELECT
+			COUNT(*)
+		FROM
+			TB_REV
+	</select>
+	
+	<select id="revList" parameterType="pagingDto" resultType="saleDto">
+		SELECT
+			*
+		FROM
+			(
+			SELECT
+				/*+ first_rows(10) */ ROW_NUMBER() OVER (ORDER BY tb_rev.SEQ_REV DESC) rnum
+				, tb_sle.SEQ_SLE
+				, tb_sle.SLE_NM
+				, tb_sle.PRICE_SALE
+				, tb_sle.IMG
+				, tb_sle.CD_STATE_SALE
+				, tb_rev.SEQ_REV
+				, TO_CHAR(tb_rev.DT_REG, 'YYYY-MM-DD') DT_REG
+				, tb_rev.RATING
+				, (SELECT ID FROM TB_CST tb_cst WHERE tb_cst.SEQ_CST = tb_rev.SEQ_CST) ID
+				, tb_rev.contents
+			FROM
+				TB_REV 				tb_rev
+				INNER JOIN TB_SLE	tb_sle ON tb_rev.SEQ_SLE = tb_sle.SEQ_SLE
+			)
+		<![CDATA[
+		WHERE rnum >= (${currentPage} - 1) * ${linePerPage} + 1 AND rnum <= ${currentPage} * ${linePerPage}
+		]]> 
+		ORDER BY rnum
+	</select>
+	
+	<select id="count" parameterType="pagingDto" resultType="java.lang.Integer">
+		SELECT
+			COUNT(*)
+		FROM
+			TB_SLE
+	</select>
+	
+	<select id="list" parameterType="pagingDto" resultType="saleDto">
+		SELECT
+				*
+		FROM
+			(
+			SELECT
+				/*+ first_rows(10) */ ROW_NUMBER() OVER (ORDER BY SEQ_SLE DESC) rnum
+				, SEQ_SLE
+				, SLE_NM
+				, PRICE_SALE
+				, IMG
+				, CD_CTG
+				, CD_STATE_SALE
+				, TO_CHAR(DT_REG, 'YYYY-MM-DD') DT_REG
+				, DESCES
+				, REGISTER
+			FROM
+				TB_SLE tb_sle
+			)
+		<![CDATA[
+		WHERE rnum >= (${currentPage} - 1) * ${linePerPage} + 1 AND rnum <= ${currentPage} * ${linePerPage}
+		]]> 
+		ORDER BY rnum
+	</select>
+	
+	<select id="select" parameterType="saleDto" resultType="saleDto">
+		SELECT
+			SEQ_SLE
+			, SLE_NM
+			, COM_NM
+			, CD_CTG
+			, IMG
+			, DESCES
+			, PRICE_SALE
+			, CD_STATE_SALE
+			, TO_CHAR(DT_SALE_START, 'YYYY/MM/DD') DT_SALE_START
+			, TO_CHAR(DT_SALE_END, 'YYYY/MM/DD') DT_SALE_END
+			, TO_CHAR(DT_REG, 'YYYY-MM-DD') DT_REG
+			, TO_CHAR(DT_UPT, 'YYYY-MM-DD') DT_UPT
+			, REGISTER
+		FROM
+			TB_SLE
+		WHERE
+			SEQ_SLE = #{seq_sle}
+	</select>
+	
+	<update id="update" parameterType="saleDto">
+		UPDATE
+			TB_SLE
+		SET
+			SLE_NM				= #{sle_nm}
+			, CD_CTG			= #{cd_ctg}
+			, DESCES			= #{desces}
+			, COM_NM			= #{com_nm}
+			, IMG				= #{img}
+			, CD_STATE_SALE		= #{cd_state_sale}
+			, DT_SALE_START		= TO_DATE(#{dt_sale_start}, 'YYYY/MM/DD')
+			, DT_SALE_END		= TO_DATE(#{dt_sale_end}, 'YYYY/MM/DD')
+			, DT_UPT			= SYSDATE
+			, UPDATER			= 1
+		WHERE
+			SEQ_SLE = #{seq_sle}
+	</update>
+	
+</mapper>

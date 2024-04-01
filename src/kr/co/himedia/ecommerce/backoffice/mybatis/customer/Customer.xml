@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.himedia.ecommerce.backoffice.mybatis.customer.Customer">
+	
+	<select id="countList" resultType="java.lang.Integer">
+		SELECT
+			COUNT(ROWNUM)
+		FROM
+			TB_CST
+		WHERE
+			TC_STATE = 1
+	</select>
+	
+	<select id="selectList" parameterType="pagingDto" resultType="customerDto">
+		SELECT
+			*
+		FROM
+			(
+			SELECT
+				/*+ first_rows(10) */ ROW_NUMBER() OVER (ORDER BY DT_REG DESC) rnum
+				, SEQ_CST
+				, CST_NM
+				, ID
+				, CST_EMAIL
+				, PHONE
+				, FLG_SMS
+				, FLG_EMAIL
+				, TO_CHAR(DT_REG, 'YYYY-MM-DD') DT_REG
+			FROM
+				TB_CST
+			WHERE
+				TC_STATE = 1
+			)
+		<![CDATA[
+		WHERE rnum >= (${currentPage} - 1) * ${linePerPage} + 1 AND rnum <= ${currentPage} * ${linePerPage}
+		]]> 
+		ORDER BY rnum
+	</select>
+	
+	<select id="selectEmail" resultType="java.lang.String">
+		SELECT
+			CST_EMAIL
+		FROM
+			TB_CST
+		WHERE
+			TC_STATE = 1
+		AND
+			FLG_EMAIL = 'Y'
+	</select>
+	
+	<update	id="updateWithdrawal" parameterType="java.lang.Integer">
+		UPDATE
+			TB_CST
+		SET
+			TC_STATE 	= 3
+			, DT_UPT 	= SYSDATE
+			, UPDATER 	= 0
+		WHERE
+			SEQ_CST = #{seq_cst}
+	</update>
+	
+	<select id="countWithdrawal" resultType="java.lang.Integer">
+		SELECT
+			COUNT(ROWNUM)
+		FROM
+			TB_CST
+		WHERE
+			<![CDATA[
+				TC_STATE <> 1
+			]]> 
+	</select>
+	
+	<select id="withdrawalList" parameterType="pagingDto" resultType="customerDto">
+		SELECT
+			*
+		FROM
+			(
+			SELECT
+				/*+ first_rows(10) */ ROW_NUMBER() OVER (ORDER BY DT_REG DESC) rnum
+				, SEQ_CST
+				, CST_NM
+				, ID
+				, CST_EMAIL
+				, PHONE
+				, TC_STATE
+				, TO_CHAR(DT_UPT, 'YYYY-MM-DD') DT_UPT
+			FROM
+				TB_CST
+			WHERE
+				<![CDATA[
+					TC_STATE <> 1
+				]]>
+			)
+		<![CDATA[
+		WHERE rnum >= (${currentPage} - 1) * ${linePerPage} + 1 AND rnum <= ${currentPage} * ${linePerPage}
+		]]> 
+		ORDER BY rnum
+	</select>
+	
+	<insert id="insertCustomer" parameterType="customerDto">
+		INSERT INTO TB_CST
+			(SEQ_CST, ID, PASSWD, CST_NM, PHONE, POSTCODE, ADDR1, ADDR2, ADDR3, CST_EMAIL, FLG_SMS, DT_SMS, FLG_EMAIL, DT_EMAIL, TC_STATE, DT_REG, REGISTER, SSO)
+		VALUES
+			(#{seq_cst}, #{id}, #{passwd}, #{cst_nm}, #{phone}, #{postcode}, #{addr1}, #{addr2}, #{addr3}, #{cst_email}, #{flg_sms}, SYSDATE, #{flg_email}, SYSDATE, 1, SYSDATE, #{register}, #{sso})
+	</insert>
+	
+	<select id="sequence" resultType="java.lang.Integer">
+		SELECT SQ_SEQ_CST.NEXTVAL FROM DUAL
+	</select>
+	
+	<select id="searchCustomer" resultType="java.lang.Integer" parameterType="customerDto">
+		SELECT
+			count(*)
+		FROM
+			TB_CST
+		WHERE
+			CST_NM = #{cst_nm}
+		AND
+			CST_EMAIL = #{cst_email}
+	</select>
+	
+	<select id="listing" parameterType="java.lang.String" resultType="customerDto">
+		SELECT
+			ID
+		FROM
+			TB_CST
+		WHERE
+			ID = #{id}
+	</select>
+	
+</mapper>

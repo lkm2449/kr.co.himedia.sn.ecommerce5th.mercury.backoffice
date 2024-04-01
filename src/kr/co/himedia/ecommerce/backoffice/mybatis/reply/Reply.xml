@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.himedia.ecommerce.backoffice.mybatis.reply.Reply">
+	
+	<insert id="insert" parameterType="replyDto">
+	INSERT INTO TB_REP
+		(SEQ_REP, SEQ_BBS, CONTENTS, SEQ_MNG, DT_REG)
+	VALUES
+		(#{seq_rep}, #{seq_bbs}, #{contents}, #{seq_mng}, SYSDATE)
+	</insert>
+	
+	
+	<select id="sequence" resultType="java.lang.Integer">
+		SELECT SQ_SEQ_BBS.NEXTVAL FROM DUAL
+	</select>
+	
+	<select id="select" parameterType="boardDto" resultType="replyDto">
+		SELECT
+			CONTENTS
+			, DT_REG
+		FROM
+			TB_REP
+		WHERE
+			SEQ_BBS= #{seq_bbs}
+	</select>
+	
+</mapper>
