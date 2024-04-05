@@ -121,8 +121,8 @@
 	
 	<select id="orderStats" parameterType="saleDto" resultType="saleDto">
 		SELECT
-			SUM(PRICE) price
-			, COUNT(*) AS "count"
+			SUM(PRICE * COUNT) price
+			, SUM(COUNT) count
 			, TO_CHAR(DT_REG, 'DD') AS dt_reg
 		FROM
 			TB_BUY_DTL

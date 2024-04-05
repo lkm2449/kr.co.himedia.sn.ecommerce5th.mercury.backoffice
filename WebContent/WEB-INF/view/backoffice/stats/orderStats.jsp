@@ -79,7 +79,7 @@
 									<thead>
 										<tr>
 											<th>일</th>
-											<th>구매 수량</th>
+											<th>판매 수량</th>
 											<th>총 판매금액</th>
 										</tr>
 									</thead>
@@ -87,7 +87,7 @@
 										<c:choose>
 											<c:when test="${empty list2}">
 												<tr>
-													<td colspan="3" style="text-align: center;">구매한 상품이 없습니다.</td>
+													<td colspan="3" style="text-align: center;">판매한 상품이 없습니다.</td>
 												</tr>
 											</c:when>
 											<c:otherwise>

@@ -148,7 +148,6 @@ public class StatsWeb {
 			mav.addObject("list", list);
 			
 			List<SaleDto> list2 = statsSrvc.orderStats(saleDto);
-
 			mav.addObject("list2", list2);
 			mav.addObject("myYear", saleDto.getYear());
 			mav.addObject("myMonth", saleDto.getMonth());

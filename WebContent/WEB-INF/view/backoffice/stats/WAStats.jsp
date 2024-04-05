@@ -44,7 +44,7 @@
 					<div class="col-md-6">
 						<div class="card">
 							<div class="card-header">
-								<h3 class="card-title">최근 일주일간 구매 현황</h3>
+								<h3 class="card-title">최근 일주일간 판매 현황</h3>
 
 								<div class="card-tools">
 									<button type="button" class="btn btn-tool" data-card-widget="collapse">
@@ -75,7 +75,7 @@
 						<!-- PIE CHART -->
 						<div class="card">
 							<div class="card-header">
-								<h3 class="card-title">총 구매 현황</h3>
+								<h3 class="card-title">총 판매 현황</h3>
 
 								<div class="card-tools">
 									<button type="button" class="btn btn-tool" data-card-widget="collapse">

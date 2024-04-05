@@ -89,7 +89,7 @@
 									<tbody>
 										<c:choose>
 											<c:when test="${empty list}">
-												<tr><td colspan="6" style="text-align: center;">현재 회원 탈퇴를 신청한 회원이 없습니다</td></tr>
+												<tr><td colspan="8" style="text-align: center;">현재 작성된 리뷰가 없습니다</td></tr>
 											</c:when>
 											<c:otherwise>
 												<c:forEach items="${list}" var="list" varStatus="status">

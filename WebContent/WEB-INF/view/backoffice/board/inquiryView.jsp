@@ -28,12 +28,12 @@
 			<div class="container-fluid">
 				<div class="row mb-2">
 					<div class="col-sm-6">
-						<h1>공지 사항</h1>
+						<h1>고객문의내역</h1>
 					</div>
 					<div class="col-sm-6">
 						<ol class="breadcrumb float-sm-right">
 							<li class="breadcrumb-item"><a href="#">고객 지원</a></li>
-							<li class="breadcrumb-item active">공지 사항</li>
+							<li class="breadcrumb-item active">고객문의내역</li>
 						</ol>
 					</div>
 				</div>
@@ -49,7 +49,7 @@
 					<div class="col-12">
 						<div class="card">
 							<div class="card-header">
-								<h3 class="card-title">공지사항</h3>
+								<h3 class="card-title">고객문의내역</h3>
 							</div>
 							<!-- /.card-header -->
 							<div class="card-body table-responsive p-0">
@@ -63,7 +63,9 @@
 									<tr>
 										<th>분류</th>
 										<td>
-										${boardDto.cd_bbs_tab}
+										<c:if test="${boardDto.cd_bbs_tab == 1}">상품</c:if>
+										<c:if test="${boardDto.cd_bbs_tab == 2}">구매</c:if>
+										<c:if test="${boardDto.cd_bbs_tab == 3}">결제</c:if>
 										</td>
 									</tr>
 									<tr>
